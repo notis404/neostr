@@ -17,7 +17,7 @@ set "windowsEscapedRoot=%root:\=\\%"
 
 set "debugOptions=/MTd /Od /DDEBUG"
 set "releaseOptions=/MT /O2 /GL /DRELEASE"
-set "sharedOptions=/W4 /WX /TC /Zi /DPROJECT_ROOT=%windowsEscapedRoot%"
+set "sharedOptions=/W4 /WX /TC /Zi /Za /DPROJECT_ROOT=%windowsEscapedRoot%"
 
 set "allOptions="
 if /I [%build_mode%]==[debug] (
