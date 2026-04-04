@@ -17,9 +17,9 @@ set "windowsEscapedRoot=%root:\=\\%"
 
 set "debugOptions=/MTd /Od /DDEBUG"
 set "releaseOptions=/MT /O2 /GL /DRELEASE"
-set "sharedOptions=/W4 /WX /TC /Zi /Za /DPROJECT_ROOT=%windowsEscapedRoot%"
-
+set "sharedOptions=/W4 /WX /TC /Zi /DNEO_OS_WINDOWS /DPROJECT_ROOT=%windowsEscapedRoot%"
 set "allOptions="
+
 if /I [%build_mode%]==[debug] (
 	set "allOptions=%debugOptions%"
 )
@@ -28,10 +28,10 @@ if /I [%build_mode%]==[release] (
 	set "allOptions=%releaseOptions%"
 )
 set "allOptions=%allOptions% %sharedOptions%"
-cl %allOptions% %root%\src\main.c /link /DEBUG /SUBSYSTEM:CONSOLE /out:neo_string_example.exe
+cl %allOptions% %root%\src\main.c /link /DEBUG /SUBSYSTEM:CONSOLE /out:neostr.exe
 set "buildResult=%ERRORLEVEL%"
 if /I [%build_mode%]==[debug] (
 	if /I [%buildResult%]==[0] (
-		call radbin %cd%\neo_string_example.pdb --out:%cd%\neo_string_example.rdi
+		call radbin %cd%\neostr.pdb --out:%cd%\neostr.rdi
 	)
 )
