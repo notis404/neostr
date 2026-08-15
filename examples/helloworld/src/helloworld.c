@@ -1,0 +1,35 @@
+#define NEOSTR_V2_IMPLEMENTATION
+#include "neostr\neostr.h"
+#undef NEOSTR_V2_IMPLEMENTATION
+
+#define NEOCORE_IMPLEMENTATION
+#include "neobuild\neocore.h"
+#undef NEOCORE_IMPLEMENTATION
+
+#include <stdio.h>
+
+#define UNREFERENCED(...) (__VA_ARGS__)
+int main(int argc, char* argv[])
+{
+  UNREFERENCED(argc, argv);
+  neo_uInt64 length = sizeof("Hello World");
+  neo_uInt64 capacity = length;
+  
+  char* helloWorldDynamic = malloc(neostr_HeaderSize(neostr_dynamic_payload64) + capacity);
+  neostr_LayoutHeader(helloWorldDynamic, neostr_dynamic_payload64);
+  neostr_SetCapacity(helloWorldDynamic, neostr_dynamic_payload64, capacity);
+  neostr_Push(helloWorldDynamic, neostr_dynamic_payload64, "Hello World", length);
+
+  char* helloWorldFixed = malloc(neostr_HeaderSize(neostr_fixed_payload64) + length);
+  neostr_LayoutHeader(helloWorldFixed, neostr_fixed_payload64);
+  neostr_SetString(helloWorldFixed, neostr_fixed_payload64, "Hello World", length);
+
+  if (neostr_Compare(helloWorldDynamic, neostr_dynamic_payload64, helloWorldFixed, neostr_fixed_payload64) == 0)
+  {
+    printf("Strings are equal!");
+  }
+
+  printf(helloWorldFixed);
+  printf(helloWorldDynamic);
+  return 0;
+}
