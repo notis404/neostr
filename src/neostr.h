@@ -11,6 +11,13 @@
 // Comments above these macro functions will specify which member names are required. 
 // The actual text of the member name can be configured with the member name macros (NEOSTR_MEMBERNAME_LENGTH, etc)  
 
+#if !defined NEOSTR_MEMBERNAME_LENGTH
+#define NEOSTR_MEMBERNAME_LENGTH length
+#endif
+
+#if !defined NEOSTR_MEMBERNAME_CAPACITY
+#define NEOSTR_MEMBERNAME_CAPACITY capacity
+#endif
 
 // Basic types
 typedef unsigned char neostr_uInt8;
@@ -125,14 +132,7 @@ neostr_uInt64 neostr_Hash(void* payloadMemory, neostr_uInt64 sizeOfPayload);
 neostr_uInt64 neostr_CStringLength(const char* cString);
 neostr_sInt32 neostr_Compare_Sized(const char* left, neostr_uInt64 leftLength, const char* right, neostr_uInt64 rightLength);
 
-#if defined NEOSTR_V2_IMPLEMENTATION
-#if !defined NEOSTR_MEMBERNAME_LENGTH
-#define NEOSTR_MEMBERNAME_LENGTH length
-#endif
-
-#if !defined NEOSTR_MEMBERNAME_CAPACITY
-#define NEOSTR_MEMBERNAME_CAPACITY capacity
-#endif
+#if defined NEOSTR_IMPLEMENTATION
 
 static const neostr_uInt64 neostr_FNV_Prime = 0x00000100000001B3ULL;
 static const neostr_uInt64 neostr_FNV_OffsetBasis = 0xCBF29CE484222325ULL;
@@ -179,4 +179,4 @@ neostr_sInt32 neostr_Compare_Sized(const char* left, neostr_uInt64 leftLength, c
   }
   return textCompare;
 }
-#endif // defined NEOSTR_V2_IMPLEMENTATION
+#endif // defined NEOSTR_IMPLEMENTATION
