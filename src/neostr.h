@@ -11,8 +11,6 @@
 // Comments above these macro functions will specify which member names are required. 
 // The actual text of the member name can be configured with the member name macros (NEOSTR_MEMBERNAME_LENGTH, etc)  
 
-#define NEOSTR_MEMBERNAME_LENGTH length
-#define NEOSTR_MEMBERNAME_CAPACITY capacity
 
 // Basic types
 typedef unsigned char neostr_uInt8;
@@ -123,10 +121,19 @@ void* malloc(neostr_uInt64 size);
 void* memcpy(void* destination, const void* source, neostr_uInt64 size);
 neostr_sInt32 memcmp(const void* left, const void* right, neostr_uInt64 count);
 void* memset(void* dest, neostr_uByte value, neostr_uInt64 n);
-
 neostr_uInt64 neostr_Hash(void* payloadMemory, neostr_uInt64 sizeOfPayload);
+neostr_uInt64 neostr_CStringLength(const char* cString);
+neostr_sInt32 neostr_Compare_Sized(const char* left, neostr_uInt64 leftLength, const char* right, neostr_uInt64 rightLength);
 
 #if defined NEOSTR_V2_IMPLEMENTATION
+#if !defined NEOSTR_MEMBERNAME_LENGTH
+#define NEOSTR_MEMBERNAME_LENGTH length
+#endif
+
+#if !defined NEOSTR_MEMBERNAME_CAPACITY
+#define NEOSTR_MEMBERNAME_CAPACITY capacity
+#endif
+
 static const neostr_uInt64 neostr_FNV_Prime = 0x00000100000001B3ULL;
 static const neostr_uInt64 neostr_FNV_OffsetBasis = 0xCBF29CE484222325ULL;
 neostr_uInt64 neostr_Hash(void* payloadMemory, neostr_uInt64 sizeOfPayload)
