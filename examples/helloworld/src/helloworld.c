@@ -1,6 +1,6 @@
-#define NEOSTR_V2_IMPLEMENTATION
+#define NEOSTR_IMPLEMENTATION
 #include "neostr\neostr.h"
-#undef NEOSTR_V2_IMPLEMENTATION
+#undef NEOSTR_IMPLEMENTATION
 
 #define NEOCORE_IMPLEMENTATION
 #include "neobuild\neocore.h"
@@ -26,7 +26,16 @@ int main(int argc, char* argv[])
 
   if (neostr_Compare(helloWorldDynamic, neostr_dynamic_payload64, helloWorldFixed, neostr_fixed_payload64) == 0)
   {
-    printf("Strings are equal!");
+    printf("\nStrings are equal!\n");
+  }
+
+  neostr_Literal(testLiteral, "Hello World");
+  if (neostr_IsValid(testLiteral))
+  {
+    if (neostr_Compare(testLiteral, neostr_fixed_payload64, helloWorldFixed, neostr_fixed_payload64) == 0)
+    {
+      printf("Literal is equal!\n");
+    }   
   }
 
   printf(helloWorldFixed);

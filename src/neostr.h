@@ -50,10 +50,15 @@ typedef struct neostr_metadata
   neostr_uInt64 payloadHash;
 }neostr_metadata;
 
+#define NEOSTR_FNV_PRIME 0x00000100000001B3ULL
+#define NEOSTR_FNV_OFFSETBASIS 0x00000100000001B3ULL
+
 #define neostr_Metadata(string) ((neostr_metadata*)(string - sizeof(neostr_metadata)))
 #define neostr_Payload(string, payloadType) ((payloadType*)((neostr_uByte*)neostr_Metadata(string) - neostr_Metadata(string)->payloadSize))
-#define neostr_IsValid(string) (neostr_Hash(neostr_Payload(string, void), neostr_Metadata(string)->payloadSize) == neostr_Metadata(string)->payloadHash)
-#define neostr_ResetHash(string) neostr_Metadata(string)->payloadHash = neostr_Hash(neostr_Payload(string, void), neostr_Metadata(string)->payloadSize)
+#define neostr_IsValid(string)                                                                                                  \
+  ((neostr_Metadata(string)->payloadHash == neostr_Hash(neostr_Payload(string, void), neostr_Metadata(string)->payloadSize)) || \
+  (neostr_Metadata(string)->payloadHash == NEOSTR_FNV_OFFSETBASIS && neostr_ResetHash(string) != 0)) // neostr literal hash is initialized to NEOSTR_FNV_OFFSETBASIS so accept once at runtime and reset the hash
+#define neostr_ResetHash(string) (neostr_Metadata(string)->payloadHash = neostr_Hash(neostr_Payload(string, void), neostr_Metadata(string)->payloadSize))
 #define neostr_HeaderSize(payloadType) (sizeof(payloadType) + sizeof(neostr_metadata))
 #define neostr_LayoutHeader(stringMemory, payloadType)                                                 \
   (memset(stringMemory, 0, sizeof(payloadType))),                                                      \
@@ -124,6 +129,22 @@ typedef struct neostr_metadata
     rightString,                                                                    \
     neostr_GetLength(rightString, rightPayloadType))
 
+// Creates a literal neostr in .data. Hash could not be set properly if the data was stored in .rodata 
+// This macro cannot be used as an expression
+#define neostr_Literal(literalVariableName, cStringLiteral)                                         \
+static struct                                                                                       \
+{                                                                                                   \
+  neostr_fixed_payload64 payload;                                                                   \
+  neostr_metadata metadata;                                                                         \
+  char data[sizeof(cStringLiteral)];                                                                \
+} literalVariableName##_memory_##__LINE__ =                                                         \
+  {                                                                                                 \
+    {sizeof(cStringLiteral)},                                                                       \
+    {sizeof(neostr_fixed_payload64), NEOSTR_FNV_OFFSETBASIS},                                       \
+    cStringLiteral                                                                                  \
+  };                                                                                                \
+static const char* const literalVariableName = literalVariableName##_memory_##__LINE__.data;
+
 void* malloc(neostr_uInt64 size);
 void* memcpy(void* destination, const void* source, neostr_uInt64 size);
 neostr_sInt32 memcmp(const void* left, const void* right, neostr_uInt64 count);
@@ -134,16 +155,14 @@ neostr_sInt32 neostr_Compare_Sized(const char* left, neostr_uInt64 leftLength, c
 
 #if defined NEOSTR_IMPLEMENTATION
 
-static const neostr_uInt64 neostr_FNV_Prime = 0x00000100000001B3ULL;
-static const neostr_uInt64 neostr_FNV_OffsetBasis = 0xCBF29CE484222325ULL;
 neostr_uInt64 neostr_Hash(void* payloadMemory, neostr_uInt64 sizeOfPayload)
 {
-  neostr_uInt64 hash = neostr_FNV_OffsetBasis;
+  neostr_uInt64 hash = NEOSTR_FNV_OFFSETBASIS;
   neostr_uByte* memory = payloadMemory;
   for (neostr_uInt64 byteIndex = 0; byteIndex < sizeOfPayload; ++byteIndex)
   {
     hash ^= memory[byteIndex];
-    hash *= neostr_FNV_Prime;
+    hash *= NEOSTR_FNV_PRIME;
   }
 
   return hash;
