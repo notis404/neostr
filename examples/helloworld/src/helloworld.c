@@ -24,12 +24,39 @@ int main(int argc, char* argv[])
   neostr_LayoutHeader(helloWorldFixed, neostr_fixed_payload64);
   neostr_SetString(helloWorldFixed, neostr_fixed_payload64, "Hello World", length);
 
-  if (neostr_Compare(helloWorldDynamic, neostr_dynamic_payload64, helloWorldFixed, neostr_fixed_payload64) == 0)
+
+  if (neostr_IsValid(helloWorldDynamic))
   {
-    printf("\nStrings are equal!\n");
+    if (neostr_IsValid(helloWorldFixed))
+    {
+      if (neostr_Compare(helloWorldDynamic, neostr_dynamic_payload64, helloWorldFixed, neostr_fixed_payload64) == 0)
+      {
+        printf("\nStrings are equal!\n");
+      }
+    }
   }
 
   neostr_Literal(testLiteral, "Hello World");
+
+
+  if (neostr_IsLiteral(testLiteral))
+  {
+    printf("Literal check correct!\n");
+  }
+  else
+  {
+    printf("Literal check incorrect!\n");
+  }
+
+  if (neostr_IsLiteral(helloWorldFixed))
+  {
+    printf("Fixed string literal check passed incorrectly!");
+  }
+  else
+  {
+    printf("Fixed string literal check failed correctly!");
+  }
+
   if (neostr_IsValid(testLiteral))
   {
     if (neostr_Compare(testLiteral, neostr_fixed_payload64, helloWorldFixed, neostr_fixed_payload64) == 0)
