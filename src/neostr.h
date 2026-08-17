@@ -176,15 +176,13 @@ static const char* const literalVariableName = literalVariableName##_memory_##__
     rightString,                                                                    \
     neostr_GetLength(rightString, rightPayloadType))
 
-
 void* malloc(neostr_uInt64 size);
 void* memcpy(void* destination, const void* source, neostr_uInt64 size);
 neostr_sInt32 memcmp(const void* left, const void* right, neostr_uInt64 count);
 void* memset(void* dest, neostr_uByte value, neostr_uInt64 n);
-neostr_uInt64 neostr_Hash(void* payloadMemory, neostr_uInt64 sizeOfPayload);
 neostr_uInt64 neostr_CStringLength(const char* cString);
 neostr_sInt32 neostr_Compare_Sized(const char* left, neostr_uInt64 leftLength, const char* right, neostr_uInt64 rightLength);
-
+neostr_uInt32 neostr_CRC32(neostr_uByte* memory, neostr_uInt64 memorySize);
 
 #if defined NEOSTR_IMPLEMENTATION
 void __cpuid(neostr_sInt32 cpuInfo[4], neostr_sInt32 function_id);
